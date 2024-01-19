@@ -39,6 +39,12 @@ def main():
     # File upload section
     pdf = st.file_uploader("Upload your PDF", type="pdf")
 
+    # Get OpenAI API Key from user input
+    openai_api_key = get_api_key()
+
+    # Load Language Model (LLM)
+    llm = load_llm(openai_api_key=openai_api_key)
+
     # Extract text from PDF
     if pdf is not None:
         pdf_reader = PdfReader(pdf)
@@ -56,14 +62,10 @@ def main():
         chunks = text_splitter.split_text(text)
 
         # Create embeddings
-        embeddings = OpenAIEmbeddings()
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
         knowledge_base = FAISS.from_texts(chunks, embeddings)
 
-        # Get OpenAI API Key from user input
-        openai_api_key = get_api_key()
-
-        # Load Language Model (LLM)
-        llm = load_llm(openai_api_key=openai_api_key)
+        
 
         # Submit button 
         user_question = st.text_input("Ask a question about your PDF:")
